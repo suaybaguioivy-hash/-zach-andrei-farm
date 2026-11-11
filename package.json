@@ -1,0 +1,13 @@
+{
+  "name": "zach-andrei-farm",
+  "version": "1.0.0",
+  "description": "Zach Andrei - Farm Adventure",
+  "scripts": {
+    "build": "echo 'Web files ready'"
+  },
+  "dependencies": {
+    "@capacitor/core": "^6.0.0",
+    "@capacitor/cli": "^6.0.0",
+    "@capacitor/ios": "^6.0.0"
+  }
+}
