@@ -1,0 +1,23 @@
+name: Build iOS - Zach Andrei Farm
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+jobs:
+  build-ios:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npm ci || npm install
+      - run: npm run build || echo "no build"
+      - run: |
+          npx cap init "Zach Andrei - Farm Adventure" com.zachandrei.farm --web-dir=dist || true
+          npx cap add ios || true
+          npx cap sync ios
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Zach-Andrei-Farm-iOS
+          path: ios/
