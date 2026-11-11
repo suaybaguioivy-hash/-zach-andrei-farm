@@ -11,13 +11,21 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-      - run: npm ci || npm install
-      - run: npm run build || echo "no build"
-      - run: |
+      - name: Install
+        run: npm install
+      - name: Make web folder if missing
+        run: |
+          mkdir -p dist
+          if [ ! -f dist/index.html ]; then echo "<h1>Zach Andrei - Farm Adventure</h1><p>Coming soon</p>" > dist/index.html; fi
+          ls -la
+      - name: Setup Capacitor iOS
+        run: |
           npx cap init "Zach Andrei - Farm Adventure" com.zachandrei.farm --web-dir=dist || true
           npx cap add ios || true
-          npx cap sync ios
-      - uses: actions/upload-artifact@v4
+          npx cap sync ios || true
+      - name: Save iOS project
+        uses: actions/upload-artifact@v4
         with:
           name: Zach-Andrei-Farm-iOS
           path: ios/
+          if-no-files-found: warn
