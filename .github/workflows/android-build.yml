@@ -18,8 +18,6 @@ jobs:
         with:
           distribution: temurin
           java-version: '21'
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
       - name: Use uploaded game file
         run: |
           mkdir -p dist
