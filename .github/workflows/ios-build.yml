@@ -1,31 +1,31 @@
-name: Build iOS - Zach Andrei Farm
+name: iOS Build - Zach Andrei Farm
 on:
-  workflow_dispatch:
   push:
     branches: [ main ]
+  workflow_dispatch:
 jobs:
-  build-ios:
+  build:
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
-          node-version: '20'
-      - name: Install
-        run: npm install
-      - name: Make web folder if missing
+          node-version: 20
+      - name: Download real game from Share link
         run: |
           mkdir -p dist
-          if [ ! -f dist/index.html ]; then echo "<h1>Zach Andrei - Farm Adventure</h1><p>Coming soon</p>" > dist/index.html; fi
-          ls -la
-      - name: Setup Capacitor iOS
+          curl -L "https://www.meta.ai/share/a/ff6807a5-f51b-4f07-9029-159f0b2330a3" -o dist/index.html
+          ls -lh dist/index.html
+          wc -c dist/index.html
+      - name: Install deps
+        run: npm install
+      - name: Sync iOS
         run: |
-          npx cap init "Zach Andrei - Farm Adventure" com.zachandrei.farm --web-dir=dist || true
-          npx cap add ios || true
-          npx cap sync ios || true
-      - name: Save iOS project
+          npx cap sync ios || npx cap add ios && npx cap sync ios
+      - name: Upload App
         uses: actions/upload-artifact@v4
         with:
-          name: Zach-Andrei-Farm-iOS
-          path: ios/
-          if-no-files-found: warn
+          name: Zach-Andrei-Farm-iOS-App
+          path: ios/App
