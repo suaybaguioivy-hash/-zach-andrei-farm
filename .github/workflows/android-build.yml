@@ -1,4 +1,4 @@
-name: Android Build - Zach Andrei Farm
+name: 【entity-Android¦canonical_name=Android】 Build - Zach Andrei Farm
 on:
   push:
     branches: [ main ]
@@ -17,7 +17,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 17
+          java-version: '17'
       - name: Use uploaded game file
         run: |
           mkdir -p dist
@@ -25,13 +25,17 @@ jobs:
           ls -lh dist/index.html
           wc -c dist/index.html
       - name: Install deps
-        run: npm install
+        run: |
+          npm install --legacy-peer-deps
+          npm install @capacitor/android --legacy-peer-deps
       - name: Sync Android
         run: |
-          npx cap sync android || npx cap add android && npx cap sync android
+          if [ ! -d android ]; then npx cap add android; fi
+          npx cap sync android
       - name: Build AAB
         run: |
           cd android
+          chmod +x gradlew
           ./gradlew bundleRelease
       - name: Upload AAB
         uses: actions/upload-artifact@v4
