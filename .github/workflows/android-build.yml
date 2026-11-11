@@ -18,7 +18,7 @@ jobs:
         with:
           distribution: temurin
           java-version: '21'
-      - name: Use uploaded game file
+      - name: Use uploaded game fileo
         run: |
           mkdir -p dist
           if [ -f "index 3.html" ]; then cp "index 3.html" dist/index.html; elif [ -f "Zach-Andrei-Farm-Game-index.html" ]; then cp "Zach-Andrei-Farm-Game-index.html" dist/index.html; elif [ -f "index.html" ]; then cp "index.html" dist/index.html; else echo "NO GAME FILE FOUND"; fi
