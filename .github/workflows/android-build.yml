@@ -1,4 +1,4 @@
-name: Android Build - Zach Andrei Farm
+me: Android Build - Zach Andrei Farm
 on:
   push:
     branches: [ main ]
