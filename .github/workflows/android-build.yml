@@ -18,16 +18,22 @@ jobs:
         with:
           distribution: temurin
           java-version: '21'
-      - name: Use uploaded game fileo
+      - name: Use uploaded game file
         run: |
           mkdir -p dist
-          if [ -f "index 3.html" ]; then cp "index 3.html" dist/index.html; elif [ -f "Zach-Andrei-Farm-Game-index.html" ]; then cp "Zach-Andrei-Farm-Game-index.html" dist/index.html; elif [ -f "index.html" ]; then cp "index.html" dist/index.html; else echo "NO GAME FILE FOUND"; fi
+          ls -la
+          echo "--- all html files ---"
+          find . -maxdepth 1 -name "*.html*" -type f -exec ls -lh {} \;
+          GAME=$(find . -maxdepth 1 -name "*.html*" -type f -exec ls -S {} + | head -n 1 | awk '{print $NF}')
+          echo "Found game file: $GAME"
+          cp "$GAME" dist/index.html
           ls -lh dist/index.html
           wc -c dist/index.html
       - name: Install deps
         run: |
           npm install --legacy-peer-deps
           npm install @capacitor/core@6.2.0 @capacitor/cli@6.2.0 @capacitor/android@6.2.0 --legacy-peer-deps
+          npm install @capacitor-community/google-play-billing@6.0.0 --legacy-peer-deps
       - name: Sync Android
         run: |
           if [ ! -d android ]; then npx cap add android; fi
