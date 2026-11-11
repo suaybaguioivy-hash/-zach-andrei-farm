@@ -1,0 +1,40 @@
+name: Android Build - Zach Andrei Farm
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - name: Use uploaded game file
+        run: |
+          mkdir -p dist
+          if [ -f "index 3.html" ]; then cp "index 3.html" dist/index.html; elif [ -f "Zach-Andrei-Farm-Game-index.html" ]; then cp "Zach-Andrei-Farm-Game-index.html" dist/index.html; elif [ -f "index.html" ]; then cp "index.html" dist/index.html; else echo "NO GAME FILE FOUND"; fi
+          ls -lh dist/index.html
+          wc -c dist/index.html
+      - name: Install deps
+        run: npm install
+      - name: Sync Android
+        run: |
+          npx cap sync android || npx cap add android && npx cap sync android
+      - name: Build AAB
+        run: |
+          cd android
+          ./gradlew bundleRelease
+      - name: Upload AAB
+        uses: actions/upload-artifact@v4
+        with:
+          name: Zach-Andrei-Farm-Android-AAB
+          path: android/app/build/outputs/bundle/release/app-release.aab
