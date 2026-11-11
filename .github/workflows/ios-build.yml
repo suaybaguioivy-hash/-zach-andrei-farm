@@ -13,10 +13,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-      - name: Download real game from Share link
+      - name: Use uploaded game file
         run: |
           mkdir -p dist
-          curl -L "https://www.meta.ai/share/a/ff6807a5-f51b-4f07-9029-159f0b2330a3" -o dist/index.html
+          if [ -f "index 3.html" ]; then cp "index 3.html" dist/index.html; elif [ -f "Zach-Andrei-Farm-Game-index.html" ]; then cp "Zach-Andrei-Farm-Game-index.html" dist/index.html; elif [ -f "index.html" ]; then cp "index.html" dist/index.html; else echo "NO GAME FILE FOUND"; fi
           ls -lh dist/index.html
           wc -c dist/index.html
       - name: Install deps
