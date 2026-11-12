@@ -12,7 +12,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
       - name: Use uploaded game file
         run: |
           mkdir -p dist
@@ -25,19 +25,25 @@ jobs:
           wc -c dist/index.html
       - name: Install deps
         run: |
-          npm install --legacy-peer-deps
-          npm install @capacitor/core@6.2.0 @capacitor/cli@6.2.0 @capacitor/ios@6.2.0 --legacy-peer-deps
+          rm -rf node_modules package-lock.json
+          npm init -y || true
+          npm install @capacitor/core@8 @capacitor/cli@8 @capacitor/ios@8 --legacy-peer-deps
           npm install capacitor-plugin-cdv-purchase --legacy-peer-deps
-      - name: Sync iOS
+      - name: Sync iOS - fresh
         run: |
-          if [ ! -d ios ]; then npx cap add ios; fi
+          rm -rf ios
+          npx cap add ios
           npx cap sync ios
+      - name: Install Pods
+        run: |
+          cd ios/App
+          pod install --repo-update
       - name: Build iOS App
         run: |
           cd ios/App
-          xcodebuild -project App.xcodeproj -scheme App -configuration Release -sdk iphoneos -allowProvisioningUpdates -destination "generic/platform=iOS" build CODE_SIGNING_ALLOWED=NO || xcodebuild -project App.xcodeproj -scheme App -configuration Release -sdk iphoneos build CODE_SIGNING_ALLOWED=NO
+          xcodebuild -workspace App.xcworkspace -scheme App -configuration Release -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY=""
       - name: Upload App
         uses: actions/upload-artifact@v4
         with:
           name: Zach-Andrei-Farm-iOS-App
-          path: ios/App/build/Release-iphoneos/App.app
+          path: ios/App/build/Release-iphonesimulator/App.app
