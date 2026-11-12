@@ -42,15 +42,17 @@ jobs:
           npx cap sync ios
           echo "=== ios/App ==="
           ls -la ios/App || echo "NO ios/App"
-      - name: Install Pods
-        run: |
-          cd ios/App
-          ls -la
-          pod install
       - name: Build iOS App
         run: |
           cd ios/App
-          xcodebuild -workspace App.xcworkspace -scheme App -configuration Release -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY=""
+          ls -la
+          if [ -f "App.xcworkspace" ]; then
+            echo "Building with workspace"
+            xcodebuild -workspace App.xcworkspace -scheme App -configuration Release -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY=""
+          else
+            echo "Building with project - SPM mode"
+            xcodebuild -project App.xcodeproj -scheme App -configuration Release -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY=""
+          fi
       - name: Upload App
         uses: actions/upload-artifact@v4
         with:
