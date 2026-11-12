@@ -31,9 +31,10 @@ jobs:
           npm install capacitor-plugin-cdv-purchase --legacy-peer-deps
       - name: Init Capacitor
         run: |
-          rm -f capacitor.config.ts capacitor.config.js capacitor.config.mjs
+          rm -f capacitor.config.ts capacitor.config.js capacitor.config.mjs capacitor.config.json
           npx cap init "Zach Andrei Farm" com.zachandrei.farm --web-dir=dist
-          cat capacitor.config.json
+          ls -la capacitor.*
+          cat capacitor.config.ts
       - name: Sync iOS - fresh
         run: |
           rm -rf ios
