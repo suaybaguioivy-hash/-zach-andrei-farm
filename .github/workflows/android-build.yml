@@ -22,26 +22,28 @@ jobs:
         run: |
           mkdir -p dist
           ls -la
-          GAME=$(find . -maxdepth 1 -name "*.html*" -type f -exec ls -S {} + | head -n 1 | awk '{print $NF}')
+          GAME=$(find . -maxdepth 1 -name "*.html*" -type f | head -n 1)
           echo "Found game file: $GAME"
+          if [ -z "$GAME" ]; then echo "NO GAME FILE FOUND"; exit 1; fi
           cp "$GAME" dist/index.html
           ls -lh dist/index.html
           wc -c dist/index.html
       - name: Install deps
         run: |
-          npm install --legacy-peer-deps
-          npm install @capacitor/core@6.2.0 @capacitor/cli@6.2.0 @capacitor/android@6.2.0 --legacy-peer-deps
-          npm install @capacitor-community/google-play-billing@6.0.0 --legacy-peer-deps
-      - name: Sync Android
+          rm -rf node_modules package-lock.json
+          npm init -y || true
+          npm install @capacitor/core@8 @capacitor/cli@8 @capacitor/android@8 --legacy-peer-deps
+          npm install capacitor-plugin-cdv-purchase --legacy-peer-deps
+      - name: Sync Android - fresh
         run: |
-          if [ ! -d android ]; then npx cap add android; fi
+          rm -rf android
+          npx cap add android
           npx cap sync android
       - name: Build AAB
         run: |
           cd android
           chmod +x gradlew
-          rm -rf ~/.gradle/caches/jars-9
-          ./gradlew clean bundleRelease --no-daemon
+          ./gradlew clean bundleRelease --no-daemon --stacktrace
       - name: Upload AAB
         uses: actions/upload-artifact@v4
         with:
