@@ -23,6 +23,16 @@ jobs:
           cp "$GAME" dist/index.html
           ls -lh dist/index.html
           wc -c dist/index.html
+      - name: Create Capacitor config
+        run: |
+          cat > capacitor.config.json <<'EOF'
+          {
+            "appId": "com.zachandrei.farm",
+            "appName": "Zach Andrei Farm",
+            "webDir": "dist"
+          }
+          EOF
+          cat capacitor.config.json
       - name: Install deps
         run: |
           rm -rf node_modules package-lock.json
@@ -34,9 +44,14 @@ jobs:
           rm -rf ios
           npx cap add ios
           npx cap sync ios
+          ls -la ios/App
+      - name: Install Pods
+        run: |
+          cd ios/App
+          pod install
+          ls -la
       - name: Build iOS App
         run: |
-          npx cap sync ios
           cd ios/App
           xcodebuild -workspace App.xcworkspace -scheme App -configuration Release -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY=""
       - name: Upload App
