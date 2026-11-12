@@ -23,33 +23,30 @@ jobs:
           cp "$GAME" dist/index.html
           ls -lh dist/index.html
           wc -c dist/index.html
-      - name: Create Capacitor config
-        run: |
-          cat > capacitor.config.json <<'EOF'
-          {
-            "appId": "com.zachandrei.farm",
-            "appName": "Zach Andrei Farm",
-            "webDir": "dist"
-          }
-          EOF
-          cat capacitor.config.json
       - name: Install deps
         run: |
           rm -rf node_modules package-lock.json
           npm init -y || true
           npm install @capacitor/core@8 @capacitor/cli@8 @capacitor/ios@8 --legacy-peer-deps
           npm install capacitor-plugin-cdv-purchase --legacy-peer-deps
+      - name: Init Capacitor
+        run: |
+          npx cap init "Zach Andrei Farm" com.zachandrei.farm --web-dir=dist
+          cat capacitor.config.json
       - name: Sync iOS - fresh
         run: |
           rm -rf ios
           npx cap add ios
           npx cap sync ios
-          ls -la ios/App
+          echo "=== ios/App ==="
+          ls -la ios/App || echo "NO ios/App"
+          echo "=== ios ==="
+          ls -la ios || echo "NO ios"
       - name: Install Pods
         run: |
           cd ios/App
-          pod install
           ls -la
+          pod install
       - name: Build iOS App
         run: |
           cd ios/App
